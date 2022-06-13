@@ -1,0 +1,15 @@
+{
+  "name": "aw-site-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oleksii Sedun",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "puppeteer": "^14.1.0"
+  }
+}
