@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const axios = require('axios');
 
+const SELECTOR = process.argv[2] || '.article-text a img';
+
 const learnAACLinks = async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -29,9 +31,9 @@ const toChunks = (arr, size) =>
     const chunkStatus = await Promise.all(chunk.map(async link => {
       const page = await browser.newPage();
       await page.goto(link);
-      const imageLink = await page.evaluate(() => document.querySelector('.article-text a img'));
+      const element = await page.evaluate((SELECTOR) => document.querySelector(SELECTOR), SELECTOR);
       await page.close();
-      return imageLink != null;
+      return element != null;
     }));
     status.push(...chunkStatus);
   }
@@ -39,20 +41,22 @@ const toChunks = (arr, size) =>
   console.log(links.filter((_, i) => status[i]));
 })();
 
-// Using axios, Promise.all & map
-// const status = await Promise.all(links.map(async link => {
-//   const {data: html} = await axios.get(link);
-//   return /<a [^<>]+><img .*><\/a>/s.test(html);
-// }));
-// const result = links.filter((_, i) => status[i]);
-// console.log(result);
+/*
+//Using axios, Promise.all & map
+const status = await Promise.all(links.map(async link => {
+  const {data: html} = await axios.get(link);
+  return /<a [^<>]+><img .*><\/a>/s.test(html);
+}));
+const result = links.filter((_, i) => status[i]);
+console.log(result);
 
-// Using puppeteer & for-of
-// const browser = await puppeteer.launch();
-// const page = await browser.newPage();
-// for (let link of links) {
-//   await page.goto(link);
-//   const imageLink = await page.evaluate(() => document.querySelector('.article-text a img'));
-//   if (imageLink != null) console.log(link);
-// }
-// await browser.close();
+//Using puppeteer & for-of
+const browser = await puppeteer.launch();
+const page = await browser.newPage();
+for (let link of links) {
+  await page.goto(link);
+  const imageLink = await page.evaluate(() => document.querySelector('.article-text a img'));
+  if (imageLink != null) console.log(link);
+}
+await browser.close();
+*/
