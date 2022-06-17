@@ -28,7 +28,7 @@ const toChunks = (arr, size) =>
 
   const browser = await puppeteer.launch();
   for (let chunk of chunks) {
-    const chunkStatus = await Promise.all(chunk.map(async link => {
+    const chunkStatus = await Promise.allSettled(chunk.map(async link => {
       const page = await browser.newPage();
       await page.goto(link);
       const element = await page.evaluate((SELECTOR) => document.querySelector(SELECTOR), SELECTOR);
@@ -38,7 +38,7 @@ const toChunks = (arr, size) =>
     status.push(...chunkStatus);
   }
   await browser.close();
-  console.log(links.filter((_, i) => status[i]));
+  console.log(links.filter((_, i) => status[i].status == 'fulfilled' && status[i].value));
 })();
 
 /*
